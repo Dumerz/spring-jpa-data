@@ -6,6 +6,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -13,10 +15,10 @@ import javax.persistence.UniqueConstraint;
 import static javax.persistence.GenerationType.SEQUENCE;
 
 @Entity
-@Table(name = "User_Account",
+@Table(name = "user_account",
 uniqueConstraints = {
-    @UniqueConstraint(name ="unique_email", columnNames = {"email"}),
-    @UniqueConstraint(name ="unique_username", columnNames = {"username"})
+    @UniqueConstraint(name ="unique_email", columnNames = "email"),
+    @UniqueConstraint(name ="unique_username", columnNames = "username")
 })
 public class User_Account {
 
@@ -35,17 +37,39 @@ public class User_Account {
     @Column(name = "email", nullable = false, columnDefinition = "TEXT")
     private String email;
 
+    @Column(name = "name_given", nullable = false, columnDefinition = "TEXT")
+    private String name_given;
+
+    @Column(name = "name_family", nullable = false, columnDefinition = "TEXT")
+    private String name_family;
+
+    @Column(name = "name_middle", nullable = true, columnDefinition = "TEXT")
+    private String name_middle;
+
     @Column(name = "createdOn", nullable = false, updatable = false, columnDefinition = "TIMESTAMPTZ")
     private Instant createdOn;
 
     @Column(name = "updateOn", nullable = false, columnDefinition = "TIMESTAMPTZ")
     private Instant updateOn;
 
-    public User_Account(Long id, String username, String password, String email, Instant createdOn, Instant updateOn) {
-        this.id = id;
+    @ManyToOne
+    @JoinColumn(name ="utid", nullable = false)
+    private User_Type user_type;
+
+    @ManyToOne
+    @JoinColumn(name ="usid", nullable = false)
+    private User_Status user_status;
+
+    public User_Account(String username, String password, String email, String name_given, String name_family,
+            String name_middle, User_Type user_type, User_Status user_status ,Instant createdOn, Instant updateOn) {
         this.username = username;
         this.password = password;
         this.email = email;
+        this.name_given = name_given;
+        this.name_family = name_family;
+        this.name_middle = name_middle;
+        this.user_type = user_type;
+        this.user_status = user_status;
         this.createdOn = createdOn;
         this.updateOn = updateOn;
     }
@@ -82,6 +106,22 @@ public class User_Account {
         this.email = email;
     }
 
+    public User_Type getUser_type() {
+        return user_type;
+    }
+
+    public void setUser_type(User_Type user_type) {
+        this.user_type = user_type;
+    }
+
+    public User_Status getUser_status() {
+        return user_status;
+    }
+
+    public void setUser_status(User_Status user_status) {
+        this.user_status = user_status;
+    }
+
     public Instant getCreatedOn() {
         return this.createdOn;
     }
@@ -97,10 +137,27 @@ public class User_Account {
         this.updateOn = updateOn;
     }
 
-    @Override
-    public String toString() {
-        return "User_Account [createdOn=" + createdOn + ", email=" + email + ", id=" + id + ", password=" + password
-                + ", updateOn=" + updateOn + ", username=" + username + "]";
+    public String getName_given() {
+        return name_given;
     }
 
+    public void setName_given(String name_given) {
+        this.name_given = name_given;
+    }
+
+    public String getName_family() {
+        return name_family;
+    }
+
+    public void setName_family(String name_family) {
+        this.name_family = name_family;
+    }
+
+    public String getName_middle() {
+        return name_middle;
+    }
+
+    public void setName_middle(String name_middle) {
+        this.name_middle = name_middle;
+    }
 }
